@@ -1,4 +1,4 @@
-# Функция, которая принимает параметр num и печатает его
+
 def print_number(num):
 
     print(num, end='')
