@@ -12,7 +12,7 @@ def month_to_season(month):
         return "Некорректный номер месяца"
 
 print("\n")
-current_month = 10
+current_month = 5
 result = month_to_season(current_month)
 print(f" {current_month}  {result}")
 
