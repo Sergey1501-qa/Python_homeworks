@@ -18,7 +18,6 @@ if __name__ == "__main__":
 
     # Тестовый пользователя
     test_user = User("Иван", "Иваныч")
-
     test_user.print_first_name()
     test_user.print_last_name()
     test_user.print_full_name()

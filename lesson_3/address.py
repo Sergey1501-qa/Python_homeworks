@@ -20,8 +20,6 @@ class Address:
 
         return f"{self.index}, {self.city}, {self.street}, {self.house} - {self.apartment}"
 
-
-# Тестирование класса Address
 if __name__ == "__main__":
 
 
