@@ -1,97 +1,92 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.edge.service import Service
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
-import os
 
 
-def click_blue_button_edge():
+def click_blue_button_chrome():
 
+    print("=" * 60)
+    print("УПРАЖНЕНИЕ 1: Клик по кнопке с CSS-классом (Chrome)")
+    print("=" * 60)
 
+    driver = None
     try:
-        # 1. Открыть браузер Microsoft Edge
-        print("1. Запуск браузера Microsoft Edge...")
+        # === ШАГ 1: ОТКРЫТЬ БРАУЗЕР GOOGLE CHROME ===
+        print("\n1. Открытие браузера Google Chrome...")
+
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument('--start-maximized')
 
         try:
-            driver = webdriver.Edge()
-        except:
+            # Автоматическое обнаружение драйвера
+            driver = webdriver.Chrome(options=chrome_options)
+            print("   ✓ Chrome успешно открыт")
+        except Exception as e:
+            print(f"   ✗ Ошибка: {e}")
+            print("   Попытка ручной настройки...")
 
-            edge_driver_path = r"C:\WebDriver\msedgedriver.exe"  # Укажите ваш путь
-            service = Service(edge_driver_path)
-            driver = webdriver.Edge(service=service)
+            # Укажите путь к chromedriver.exe
+            chrome_driver_path = r"C:\WebDriver\chromedriver.exe"
+            service = Service(chrome_driver_path)
+            driver = webdriver.Chrome(service=service, options=chrome_options)
+            print(f"   ✓ Chrome открыт с драйвером: {chrome_driver_path}")
 
-
+        # === ШАГ 2: ПЕРЕЙТИ НА СТРАНИЦУ ===
+        print("\n2. Переход на http://uitestingplayground.com/classattr...")
         driver.get("http://uitestingplayground.com/classattr")
+        print("   ✓ Страница загружена")
 
-        # Увеличиваем окно браузера
-        driver.maximize_window()
+        # === ШАГ 3: НАЙТИ И КЛИКНУТЬ НА СИНЮЮ КНОПКУ ===
+        print("\n3. Поиск синей кнопки по классу 'btn-primary'...")
 
-        # 3. Кликнуть на синюю кнопку
-        print("3. Поиск и клик по синей кнопке...")
-
-        # Ждем, пока страница загрузится и кнопка станет кликабельной
         wait = WebDriverWait(driver, 10)
 
         blue_button = wait.until(
-            EC.element_to_be_clickable((By.XPATH, "//button[contains(@class, 'btn-primary')]"))
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn-primary"))
         )
 
-        # Кликаем на кнопку
-        print("4. Кликаем по кнопке...")
-        blue_button.click()
-        print("   ✓ Кнопка успешно нажата!")
+        # Выводим информацию
+        print(f"   ✓ Кнопка найдена!")
+        print(f"     Текст: {blue_button.text}")
+        print(f"     Класс: {blue_button.get_attribute('class')}")
 
-        # Даем время увидеть результат
+        print("\n4. Клик по кнопке...")
+        blue_button.click()
+        print("   ✓ Кнопка нажата!")
+
+        # === ШАГ 4: СОХРАНЕНИЕ СКРИНШОТА ===
+        print("\n5. Сохранение скриншота...")
+        timestamp = time.strftime("%Y%m%d_%H%M%S")
+        screenshot_file = f"task1_chrome_{timestamp}.png"
+        driver.save_screenshot(screenshot_file)
+        print(f"   ✓ Скриншот: {screenshot_file}")
+
+        # Пауза
         time.sleep(2)
 
-        # 4. Проверяем, появилось ли всплывающее окно (alert)
-        print("5. Проверка всплывающих окон...")
-        try:
-            alert = driver.switch_to.alert
-            alert_text = alert.text
-            print(f"   Обнаружено всплывающее окно с текстом: '{alert_text}'")
-            alert.accept()  # Закрываем всплывающее окно
-            print("   ✓ Всплывающее окно закрыто.")
-        except:
-            print("   Всплывающее окно не обнаружено.")
-
-        # 5. Делаем скриншот для подтверждения
-        print("6. Делаем скриншот...")
-        timestamp = time.strftime("%Y%m%d_%H%M%S")
-        screenshot_path = f"lesson05_task1_screenshot_{timestamp}.png"
-        driver.save_screenshot(screenshot_path)
-        print(f"   Скриншот сохранен как: {screenshot_path}")
-
-        # Делаем небольшую паузу перед закрытием
-        time.sleep(1)
-
-        print("\n✓ Скрипт успешно выполнен!")
-
     except Exception as e:
-        print(f"\n✗ Произошла ошибка: {e}")
-        # Выводим детали ошибки
-        import traceback
-        traceback.print_exc()
+        print(f"\n✗ ОШИБКА: {e}")
 
     finally:
-        # Закрываем браузер
-        if 'driver' in locals():
+        if driver:
             driver.quit()
-            print("Браузер закрыт.")
-        print("=" * 60)
+            print("\n✓ Chrome закрыт")
 
 
 def main():
+    """Основная функция"""
+    print("Упражнение 1 - Chrome")
+    print("=" * 60)
+    print("Запустите этот скрипт 3 раза вручную!")
+    print("-" * 60)
 
-    # Запрашиваем подтверждение у пользователя
-    user_input = input("Запустить скрипт? (y/n): ")
-
-    if user_input.lower() == 'y':
-        click_blue_button_edge()
-    else:
-        print("Запуск отменен.")
+    response = input("Запустить сейчас? (да/нет): ")
+    if response.lower() in ['да', 'д', 'yes', 'y']:
+        click_blue_button_chrome()
+        print("\n✓ Запуск 1 завершен. Запустите еще 2 раза!")
 
 
 if __name__ == "__main__":
