@@ -1,7 +1,5 @@
 import pytest
 from selenium import webdriver
-
-
 @pytest.fixture
 def firefox_driver():
     """Фикстура для создания Firefox драйвера"""

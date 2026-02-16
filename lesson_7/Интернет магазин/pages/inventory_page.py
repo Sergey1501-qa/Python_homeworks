@@ -3,8 +3,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 import time
-
-
 class InventoryPage:
     # Локаторы элементов страницы
     INVENTORY_ITEMS = (By.CLASS_NAME, "inventory_item")

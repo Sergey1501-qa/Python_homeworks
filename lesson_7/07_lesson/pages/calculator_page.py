@@ -1,8 +1,6 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
-
 class CalculatorPage:
     # Локаторы элементов страницы
     DELAY_INPUT = (By.CSS_SELECTOR, "#delay")

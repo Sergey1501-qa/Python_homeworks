@@ -2,7 +2,6 @@ import sys
 import os
 import pytest
 from selenium import webdriver
-
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from pages.calculator_page import CalculatorPage

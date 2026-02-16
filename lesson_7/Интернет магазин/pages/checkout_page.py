@@ -3,8 +3,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 import re
-
-
 class CheckoutPage:
     # Локаторы для страницы с информацией о покупателе
     FIRST_NAME_INPUT = (By.ID, "first-name")

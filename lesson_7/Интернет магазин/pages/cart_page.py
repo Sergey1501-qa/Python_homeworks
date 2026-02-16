@@ -2,8 +2,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
-
-
 class CartPage:
     # Локаторы элементов страницы
     CART_ITEMS = (By.CLASS_NAME, "cart_item")

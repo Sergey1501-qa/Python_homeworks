@@ -3,7 +3,6 @@ import os
 import pytest
 from selenium import webdriver
 
-# Добавляем путь к корневой папке
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(0, PROJECT_ROOT)
 
