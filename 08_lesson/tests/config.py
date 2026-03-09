@@ -1,0 +1,13 @@
+# Конфигурация API Yougile
+YOUGILE_CONFIG = {
+    "base_url": "https://yougile.com/api-v2",
+    "auth": {
+        # Способ 1: Использование готового API ключа
+        "api_key": "ВАШ_API_КЛЮЧ_ЗДЕСЬ",
+
+        # Способ 2: Получение ключа по логину/паролю (закомментировано)
+        # "login": "ваш_email@example.com",
+        # "password": "ваш_пароль",
+        # "company_id": "ID_ВАШЕЙ_КОМПАНИИ"
+    }
+}
