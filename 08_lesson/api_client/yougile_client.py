@@ -1,4 +1,3 @@
-"""Клиент для работы с Yougile API"""
 import requests
 from typing import Optional, Dict, Any
 

@@ -1,5 +1,14 @@
 """Позитивные тесты для работы с проектами Yougile API"""
-from api_client import YougileClient
+import os
+import sys
+import pytest
+
+# Добавляем корневую папку проекта в путь Python
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
+from api_client.yougile_client import YougileClient
 from utils.data_generator import generate_unique_title
 
 

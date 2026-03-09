@@ -1,8 +1,3 @@
-"""
-Пример файла конфигурации.
-Скопируйте этот файл как config.py и заполните своими данными.
-"""
-
 # Конфигурация API Yougile
 YOUGILE_CONFIG = {
     "base_url": "https://yougile.com/api-v2",

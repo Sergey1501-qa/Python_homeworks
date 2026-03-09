@@ -1,21 +1,23 @@
 """Фикстуры pytest для тестов Yougile API"""
-import pytest
-import sys
 import os
+import sys
+import pytest
 from typing import Generator, Dict, Any
 
-# Добавляем путь к проекту для импортов
+# Добавляем корневую папку проекта в путь Python
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
-from api_client import YougileClient
+# Теперь импорты будут работать
+from api_client.yougile_client import YougileClient
 from utils.data_generator import generate_unique_title
 
 # Импортируем конфигурацию
 try:
-    from config import YOUGILE_CONFIG
+    from tests.config import YOUGILE_CONFIG
 except ImportError:
+    # Если config.py не найден, используем значения по умолчанию
     YOUGILE_CONFIG = {
         "base_url": "https://yougile.com/api-v2",
         "auth": {}
@@ -68,8 +70,8 @@ def test_project_data() -> Dict[str, Any]:
 
 @pytest.fixture
 def created_project(
-        api_client: YougileClient,
-        test_project_data: Dict[str, Any]
+    api_client: YougileClient,
+    test_project_data: Dict[str, Any]
 ) -> Generator[str, None, None]:
     """
     Фикстура создает проект и удаляет его после теста
@@ -96,5 +98,5 @@ def created_project(
     # Очистка: помечаем проект как удаленный
     try:
         api_client.delete_project(project_id)
-    except Exception:
-        print(f"Не удалось удалить проект {project_id}")
+    except Exception as e:
+        print(f"Не удалось удалить проект {project_id}: {e}")
