@@ -1,131 +1,156 @@
-"""
-Тесты для CRUD операций со студентами
-"""
+"""Tests for Student model and database operations."""
 import pytest
-from datetime import date, timedelta
+from datetime import date
 from sqlalchemy.exc import IntegrityError
-
 from models.student import Student
 
 
-class TestStudentCRUD:
-    """Тесты для CRUD операций со студентами"""
+class TestStudentModel:
+    """Test cases for Student model."""
 
-    # ========== Тест на добавление (CREATE) ==========
-
-    def test_create_student(self, db_session, test_student_data):
-        """
-        Тест 1: добавление нового студента в базу данных
-
-        Шаги:
-        1. Создать объект студента
-        2. Добавить в сессию
-        3. Сохранить в БД
-        4. Проверить, что студент появился в БД
-        5. Удалить тестовые данные
-        """
-        # 1-2. Создаем и добавляем студента
-        student = Student(**test_student_data)
+    def test_create_student(self, db_session):
+        """Test creating a new student."""
+        # Создаем студента
+        student = Student(
+            first_name="Иван",
+            last_name="Петров",
+            email="ivan@example.com",
+            birth_date=date(2000, 1, 1),
+            grade=10
+        )
         db_session.add(student)
         db_session.commit()
 
-        # 3. Получаем ID сохраненного студента
+        # Проверяем
+        assert student.id is not None
+        assert student.first_name == "Иван"
+        assert student.last_name == "Петров"
+        assert student.email == "ivan@example.com"
+        assert student.birth_date == date(2000, 1, 1)
+        assert student.grade == 10
+
+    def test_read_student(self, db_session):
+        """Test reading a student from database."""
+        # Создаем студента
+        student = Student(
+            first_name="Петр",
+            last_name="Сидоров",
+            email="petr@example.com",
+            birth_date=date(2001, 2, 2),
+            grade=9
+        )
+        db_session.add(student)
+        db_session.commit()
+
+        # Читаем студента
+        found = db_session.query(Student).filter_by(email="petr@example.com").first()
+        assert found is not None
+        assert found.first_name == "Петр"
+        assert found.last_name == "Сидоров"
+
+    def test_update_student(self, db_session):
+        """Test updating a student."""
+        # Создаем студента
+        student = Student(
+            first_name="Мария",
+            last_name="Иванова",
+            email="maria@example.com",
+            birth_date=date(2002, 3, 3),
+            grade=8
+        )
+        db_session.add(student)
+        db_session.commit()
+
+        # Обновляем
+        student.grade = 9
+        db_session.commit()
+
+        # Проверяем
+        updated = db_session.query(Student).filter_by(email="maria@example.com").first()
+        assert updated.grade == 9
+
+    def test_delete_student(self, db_session):
+        """Test deleting a student."""
+        # Создаем студента
+        student = Student(
+            first_name="Анна",
+            last_name="Смирнова",
+            email="anna@example.com",
+            birth_date=date(2003, 4, 4),
+            grade=7
+        )
+        db_session.add(student)
+        db_session.commit()
         student_id = student.id
 
-        try:
-            # 4. Проверяем, что студент сохранился
-            saved_student = db_session.query(Student).filter(
-                Student.id == student_id
-            ).first()
-
-            assert saved_student is not None, "Студент не найден в БД"
-            assert saved_student.first_name == test_student_data['first_name']
-            assert saved_student.last_name == test_student_data['last_name']
-            assert saved_student.email == test_student_data['email']
-            assert saved_student.birth_date == test_student_data['birth_date']
-            assert saved_student.group_name == test_student_data['group_name']
-            assert saved_student.enrollment_year == test_student_data['enrollment_year']
-
-            print(f"\n✅ Студент успешно создан с ID: {student_id}")
-
-        finally:
-            # 5. Удаляем тестовые данные
-            db_session.delete(student)
-            db_session.commit()
-            print(f"🧹 Тестовые данные удалены")
-
-    # ========== Тест на изменение (UPDATE) ==========
-
-    def test_update_student(self, db_session, created_student):
-        """
-        Тест 2: изменение данных существующего студента
-
-        Шаги:
-        1. Получить студента из БД
-        2. Изменить его данные
-        3. Сохранить изменения
-        4. Проверить, что данные обновились
-        """
-        # 1. Получаем студента
-        student = db_session.query(Student).filter(
-            Student.id == created_student
-        ).first()
-
-        # 2. Изменяем данные
-        new_last_name = "Иванов"
-        new_group = "ГР-789"
-
-        old_last_name = student.last_name
-        old_group = student.group_name
-
-        student.last_name = new_last_name
-        student.group_name = new_group
-
-        # 3. Сохраняем изменения
-        db_session.commit()
-        print(f"\n✏️ Обновление: {old_last_name} -> {new_last_name}, {old_group} -> {new_group}")
-
-        # 4. Проверяем, что данные обновились
-        updated_student = db_session.query(Student).filter(
-            Student.id == created_student
-        ).first()
-
-        assert updated_student.last_name == new_last_name, \
-            "Фамилия не обновилась"
-        assert updated_student.group_name == new_group, \
-            "Группа не обновилась"
-        assert updated_student.first_name != new_last_name, \
-            "Имя не должно измениться"
-
-        print(f"✅ Данные студента {created_student} успешно обновлены")
-
-    # ========== Тест на удаление (DELETE) ==========
-
-    def test_delete_student(self, db_session, created_student):
-        """
-        Тест 3: удаление студента из базы данных
-
-        Шаги:
-        1. Проверить, что студент существует в БД
-        2. Удалить студента
-        3. Проверить, что студент больше не существует в БД
-        """
-        # 1. Проверяем, что студент существует
-        student = db_session.query(Student).filter(
-            Student.id == created_student
-        ).first()
-        assert student is not None, "Студент должен существовать до удаления"
-        print(f"\n🔍 Найден студент с ID: {created_student}")
-
-        # 2. Удаляем студента
+        # Удаляем
         db_session.delete(student)
         db_session.commit()
-        print(f"🗑️ Студент {created_student} удален")
 
-        # 3. Проверяем, что студент удален
-        deleted_student = db_session.query(Student).filter(
-            Student.id == created_student
-        ).first()
+        # Проверяем
+        deleted = db_session.query(Student).filter_by(id=student_id).first()
+        assert deleted is None
 
-        assert deleted_student is None, "Студент не был удален"
-        print(f"✅ Подтверждено: студент {created_student} больше не существует в БД")
+    def test_unique_email_constraint(self, db_session):
+        """Test that email must be unique."""
+        # Создаем первого студента
+        student1 = Student(
+            first_name="Ольга",
+            last_name="Козлова",
+            email="olga@example.com",
+            birth_date=date(2004, 5, 5),
+            grade=6
+        )
+        db_session.add(student1)
+        db_session.commit()
+
+        # Пытаемся создать второго с тем же email
+        student2 = Student(
+            first_name="Дмитрий",
+            last_name="Новиков",
+            email="olga@example.com",  # Тот же email
+            birth_date=date(2005, 6, 6),
+            grade=5
+        )
+        db_session.add(student2)
+        with pytest.raises(IntegrityError):
+            db_session.commit()
+        db_session.rollback()
+
+    def test_filter_by_grade(self, db_session):
+        """Test filtering students by grade."""
+        # Создаем нескольких студентов
+        students = [
+            Student(
+                first_name="Алексей",
+                last_name="Алексеев",
+                email="aleksey1@example.com",
+                birth_date=date(2000, 1, 1),
+                grade=10
+            ),
+            Student(
+                first_name="Алексей",
+                last_name="Петров",
+                email="aleksey2@example.com",
+                birth_date=date(2001, 2, 2),
+                grade=10
+            ),
+            Student(
+                first_name="Борис",
+                last_name="Борисов",
+                email="boris@example.com",
+                birth_date=date(2002, 3, 3),
+                grade=9
+            ),
+        ]
+        for student in students:
+            db_session.add(student)
+        db_session.commit()
+
+        # Фильтруем по классу 10
+        tenth_grade = db_session.query(Student).filter(Student.grade == 10).all()
+        assert len(tenth_grade) == 2
+
+        # Фильтруем по классу 9
+        ninth_grade = db_session.query(Student).filter(Student.grade == 9).all()
+        assert len(ninth_grade) == 1

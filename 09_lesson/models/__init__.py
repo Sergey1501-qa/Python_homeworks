@@ -1,4 +1,4 @@
-"""Модели базы данных"""
-from .student import Base, Student
+"""Models package initialization."""
+from .student import Student
 
-__all__ = ["Base", "Student"]
+__all__ = ['Student']
