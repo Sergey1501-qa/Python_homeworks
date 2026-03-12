@@ -8,8 +8,9 @@ from sqlalchemy.orm import sessionmaker
 # Добавляем путь к корню проекта
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+# Импортируем после добавления пути
 from config import get_db_url
-from models.student import Base
+from models.student import Base, Student
 
 
 @pytest.fixture
@@ -35,3 +36,15 @@ def db_session(engine, tables):
         yield session
     finally:
         session.close()
+
+
+@pytest.fixture
+def sample_student():
+    """Create a sample student for tests."""
+    return Student(
+        first_name="Иван",
+        last_name="Петров",
+        email="ivan@example.com",
+        birth_date=date(2000, 1, 1),
+        grade=10
+    )

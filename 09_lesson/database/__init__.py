@@ -7,7 +7,6 @@ from config import get_db_url
 engine = create_engine(get_db_url())
 SessionLocal = sessionmaker(bind=engine)
 
-
 def get_db():
     """Get database session."""
     db = SessionLocal()

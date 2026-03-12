@@ -4,7 +4,6 @@ from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
 
-
 class Student(Base):
     """Student model representing students table."""
 

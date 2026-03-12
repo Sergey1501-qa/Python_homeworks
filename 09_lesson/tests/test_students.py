@@ -4,7 +4,6 @@ from datetime import date
 from sqlalchemy.exc import IntegrityError
 from models.student import Student
 
-
 class TestStudentModel:
     """Test cases for Student model."""
 
