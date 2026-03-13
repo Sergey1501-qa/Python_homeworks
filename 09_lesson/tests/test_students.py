@@ -1,8 +1,15 @@
 """Tests for Student model and database operations."""
 import pytest
+import sys
+import os
 from datetime import date
 from sqlalchemy.exc import IntegrityError
+
+# Добавляем путь к корню проекта
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from models.student import Student
+
 
 class TestStudentModel:
     """Test cases for Student model."""

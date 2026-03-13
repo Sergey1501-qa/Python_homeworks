@@ -1,25 +1,34 @@
 """Pytest fixtures for database tests."""
 import pytest
-import sys
 import os
+import sys
+import importlib.util
+from datetime import date
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 # Добавляем путь к корню проекта
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-# Импортируем после добавления пути
-from config import get_db_url
+# Загружаем config.py напрямую по пути
+config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'config.py'))
+spec = importlib.util.spec_from_file_location("project_config", config_path)
+config_module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(config_module)
+
+DATABASE_URL = config_module.get_db_url()
+
+# Импортируем модели (теперь путь должен работать)
 from models.student import Base, Student
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def engine():
-    """Create database engine for each test."""
-    return create_engine(get_db_url(), echo=False)
+    """Create database engine for tests."""
+    return create_engine(DATABASE_URL, echo=False)
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def tables(engine):
     """Create all tables for each test."""
     Base.metadata.create_all(engine)
@@ -27,7 +36,7 @@ def tables(engine):
     Base.metadata.drop_all(engine)
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def db_session(engine, tables):
     """Create database session for each test."""
     TestingSessionLocal = sessionmaker(bind=engine)
@@ -39,12 +48,12 @@ def db_session(engine, tables):
 
 
 @pytest.fixture
-def sample_student():
-    """Create a sample student for tests."""
-    return Student(
-        first_name="Иван",
-        last_name="Петров",
-        email="ivan@example.com",
-        birth_date=date(2000, 1, 1),
-        grade=10
-    )
+def sample_student_data():
+    """Provide sample student data for tests."""
+    return {
+        "first_name": "Иван",
+        "last_name": "Петров",
+        "email": "ivan@example.com",
+        "birth_date": date(2000, 1, 1),
+        "grade": 10
+    }
